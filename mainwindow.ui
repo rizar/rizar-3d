@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>384</width>
+    <height>301</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>384</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuLab">
+    <property name="title">
+     <string>&amp;Lab</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuDemo">
+    <property name="title">
+     <string>&amp;Demo</string>
+    </property>
+    <addaction name="actionDemo1"/>
+    <addaction name="actionDemo2"/>
+    <addaction name="actionDemo3"/>
+   </widget>
+   <addaction name="menuLab"/>
+   <addaction name="menuDemo"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionDemo1">
+   <property name="text">
+    <string>Demo1</string>
+   </property>
+  </action>
+  <action name="actionDemo2">
+   <property name="text">
+    <string>Demo2</string>
+   </property>
+  </action>
+  <action name="actionDemo3">
+   <property name="text">
+    <string>Demo3</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
