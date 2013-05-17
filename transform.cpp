@@ -51,6 +51,24 @@ Transform Transform::orthogonal(QVector3D toI, QVector3D toJ, QVector3D toK) {
     return result;
 }
 
+Transform Transform::rotateXY(qreal alpha) {
+    return Transform::orthogonal(QVector3D(cos(alpha), -sin(alpha), 0),
+                                 QVector3D(sin(alpha), cos(alpha), 0),
+                                 QVector3D(0, 0, 1));
+}
+
+Transform Transform::rotateXZ(qreal alpha) {
+    return Transform::orthogonal(QVector3D(cos(alpha), 0, -sin(alpha)),
+                                 QVector3D(0, 1, 0),
+                                 QVector3D(sin(alpha), 0, cos(alpha)));
+}
+
+Transform Transform::rotateYZ(qreal alpha) {
+    return Transform::orthogonal(QVector3D(1, 0, 0),
+                                 QVector3D(0, cos(alpha), -sin(alpha)),
+                                 QVector3D(0, sin(alpha), cos(alpha)));
+}
+
 Transform Transform::scale(qreal kx, qreal ky, qreal kz)
 {
     Transform result = Transform::doNothing();

@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     testplane.cpp \
     bodies.cpp \
     testpolygon.cpp \
-    camera.cpp
+    camera.cpp \
+    lab.cpp
 
 HEADERS  += mainwindow.h \
     transform.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     testpolyline.h \
     testplane.h \
     testpolygon.h \
-    camera.h
+    camera.h \
+    lab.h
 
 FORMS    += mainwindow.ui
 

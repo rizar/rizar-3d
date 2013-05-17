@@ -11,6 +11,7 @@ public:
     
 private slots:
     void testProjectionContains();
+    void testZCutPolygon();
 };
 
 #endif // TESTPOLYGON_H

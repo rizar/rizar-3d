@@ -11,6 +11,8 @@ public:
     
 private slots:
     void testDrawTriangle();
+    void testZCutSquare();
+    void testZCutSquare2();
 };
 
 #endif // TESTPOLYLINE_H

@@ -5,11 +5,18 @@
 
 #include <QDebug>
 
+qreal const EPS = 1e-9;
+
 quint32 CompositeBody::numParts() const {
     return parts_.size();
 }
 
 IBody * CompositeBody::part(quint32 index) {
+    return parts_[index].data();
+}
+
+const IBody *CompositeBody::part(quint32 index) const
+{
     return parts_[index].data();
 }
 
@@ -24,6 +31,23 @@ CompositeBody * CompositeBody::transform(Transform const& tr) const {
             QSharedPointer<IBody>(transformed->part(i)->transform(tr));
     }
     return transformed;
+}
+
+CompositeBody * CompositeBody::zCut(qreal z) const
+{
+    QVector< QSharedPointer<IBody> > resParts;
+    for (quint32 i = 0; i < numParts(); i++) {
+        IBody * cutResult = part(i)->zCut(z);
+        if (cutResult) {
+            resParts.push_back(QSharedPointer<IBody>(cutResult));
+        } else {
+            qDebug() << "part was lost";
+        }
+    }
+    if (!resParts.empty()) {
+        return new CompositeBody(resParts);
+    }
+    return 0;
 }
 
 CompositeBody::CompositeBody(const CompositeBody &other) :
@@ -92,6 +116,57 @@ FlatPolyline * FlatPolyline::transform(const Transform &tr) const {
     return transformed;
 }
 
+void FlatPolyline::zCutSegment(qint32 i, qint32 j,
+                               qreal z, QVector<QVector3D> & dest, bool addEndPoint) const {
+    bool prevInside = points_[i].z() > z - EPS;
+    bool inside = points_[j].z() > z - EPS;
+    QVector3D delta = points_[j] - points_[i];
+    qreal part = (z - points_[i].z()) / delta.z();
+
+    if (inside) {
+        if (prevInside) {
+            // move inside
+            if (addEndPoint) {
+                dest.push_back(points_[j]);
+            }
+        }
+        else {
+            // enter
+            dest.push_back(points_[i] + part * delta);
+            if (addEndPoint) {
+                dest.push_back(points_[j]);
+            }
+        }
+    }
+    else {
+        if (prevInside) {
+            // exit
+            dest.push_back(points_[i] + part * delta);
+        }
+    }
+}
+
+FlatPolyline * FlatPolyline::zCut(qreal z) const
+{
+    QVector<QVector3D> resPoints;
+
+    if (points_[0].z() > z - EPS) {
+        resPoints.push_back(points_[0]);
+    }
+
+    for (qint32 i = 1; i < points_.size(); i++) {
+        zCutSegment(i - 1, i, z, resPoints);
+    }
+
+    if (!resPoints.empty()) {
+        FlatPolyline * result = clone();
+        result->points_ = resPoints;
+        return result;
+    }
+    qDebug() << "polyline was lost";
+    return 0;
+}
+
 FlatPolyline::FlatPolyline(QVector<QVector3D> const& points) :
     points_(points)
 {
@@ -114,8 +189,13 @@ quint32 FlatPolyline::numPoints() {
     return points_.size();
 }
 
-QVector3D FlatPolyline::point(quint32 index) {
+QVector3D FlatPolyline::point(quint32 index) const {
     return points_.at(index);
+}
+
+QVector<QVector3D> const& FlatPolyline::points() const
+{
+    return points_;
 }
 
 QVector3D FlatPolyline::first() {
@@ -133,7 +213,24 @@ FlatPolygon * FlatPolygon::clone() const {
 FlatPolygon * FlatPolygon::transform(Transform const& tr) const {
     FlatPolygon * transformed = new FlatPolygon(*this);
     transformed->polyline_.reset(polyline_->transform(tr));
+    qDebug() << "TRANSFORM";
+    qDebug() << transformed->polyline_->points();
     return transformed;
+}
+
+FlatPolygon * FlatPolygon::zCut(qreal z) const
+{
+    FlatPolyline * cut = polyline_->zCut(z);
+    if (!cut) {
+        qDebug() << "polygon was lost";
+        return 0;
+    }
+    polyline_->zCutSegment(polyline_->numPoints() - 1, 0, z, cut->points_, false);
+    FlatPolygon * result = clone();
+    result->polyline_.reset(cut);
+    qDebug() << "ZCUT";
+    qDebug() << result->polyline_->points();
+    return result;
 }
 
 FlatPolygon::FlatPolygon(const QVector<QVector3D> &points) :
@@ -141,6 +238,10 @@ FlatPolygon::FlatPolygon(const QVector<QVector3D> &points) :
 {
 }
 
+FlatPolygon::FlatPolygon(FlatPolyline * polyline)
+    : polyline_(polyline)
+{
+}
 
 FlatPolygon::FlatPolygon(const FlatPolygon &other)
     : polyline_(other.polyline_->clone())
@@ -205,6 +306,22 @@ FlatArea * FlatArea::transform(const Transform &tr) const
     FlatArea * transformed = clone();
     transformed->border_.reset(border_->transform(tr));
     return transformed;
+}
+
+FlatArea * FlatArea::zCut(qreal z) const
+{
+    FlatClosedContour * newBorder = border_->zCut(z);
+    if (newBorder) {
+        FlatArea * result = clone();
+        result->border_.reset(newBorder);
+        return result;
+    }
+    return 0;
+}
+
+FlatArea::FlatArea(FlatClosedContour * border)
+    : border_(border)
+{
 }
 
 FlatArea::FlatArea(const FlatArea &other)

@@ -20,18 +20,20 @@ void ICamera::setCanvas(ICanvas * canvas) {
     buildTransform();
 }
 
-Transform const& ICamera::transform() const {
-    return transform_;
+Transform const& ICamera::toCanonical() const {
+    return toCanonical_;
 }
 
-void ICamera::setTransform(Transform const& transform)
-{
-    transform_ = transform;
+Transform const& ICamera::toUser() const {
+    return toUser_;
 }
 
-void ICamera::draw(IBody const& body) {
-    QScopedPointer<IBody> transformedBody(body.transform(transform()));
-    transformedBody->draw(canvas());
+void ICamera::setToCanonical(const Transform &transform) {
+    toCanonical_ = transform;
+}
+
+void ICamera::setToUser(const Transform &transform) {
+    toUser_ = transform;
 }
 
 void ICamera::moveBackward(qreal step) {
@@ -56,10 +58,18 @@ CentralProjectionCamera::CentralProjectionCamera(QVector3D cop,
                                                  qreal far) :
     cop_(cop),
     vpn_(vpn),
+    initialCop_(cop),
+    initialVpn_(vpn),
     vup_(0, 1, 0),
     near_(near),
     far_(far)
 {
+}
+
+void CentralProjectionCamera::reset()
+{
+    cop_ = initialCop_;
+    vpn_ = initialVpn_;
 }
 
 void CentralProjectionCamera::moveForward(qreal step)
@@ -99,24 +109,33 @@ void CentralProjectionCamera::buildTransform() {
     // qDebug() << "halfWidth" << halfWidth;
     // qDebug() << "halfHeight" << halfHeight;
 
-    setTransform(Transform::doNothing()
+    setToCanonical(Transform::doNothing()
             .combine(Transform::shift(-cop_))
             .combine(Transform::orthogonal(rx, ry, rz))
             .combine(Transform::reflect(2))
             //.combine(Transform::reflect(0))
             .combine(Transform::scale(near_ / halfWidth, near_ / halfHeight, 1))
-            .combine(Transform::scale(1 / far_, 1 / far_, 1 / far_))
+            .combine(Transform::scale(1 / far_, 1 / far_, 1 / far_)));
             // at this point visible space is cut pyramide
             // -z <= x <= z
             // -z <= y <= z
             // near_ / far_ <= z <= 1
-            .combine(Transform::perspective(near_ / far_))
+    setToUser(Transform::perspective(near_ / far_)
             .combine(Transform::shift(QVector3D(1, 1, 0)))
             .combine(Transform::scale(0.5, 0.5, 1))
             // at this point visible space is a cube
             .combine(Transform::scale(canvas()->width(), canvas()->height(), 1))
             // the last transformation fits to the screen size
             );
+}
+
+void CentralProjectionCamera::draw(const IBody &body) const {
+    QScopedPointer<IBody> canonical(body.transform(toCanonical()));
+    QScopedPointer<IBody> cut(canonical->zCut(near_ / far_));
+    if (cut.data()) {
+        QScopedPointer<IBody> final(cut->transform(toUser()));
+        final->draw(canvas());
+    }
 }
 
 QVector3D CentralProjectionCamera::position() {

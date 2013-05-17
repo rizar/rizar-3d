@@ -87,13 +87,14 @@ void Demo3::paintEvent(QPaintEvent *) {
 
     QScopedPointer<IBody> cube(
                     QScopedPointer<IBody>(new Cube)->transform(
-                        Transform::scale(10, 10, 10).combine(
-                        Transform::shift(QVector3D(0, 0, 10))))
+                        Transform::scale(30, 30, 30).combine(
+                        Transform::shift(QVector3D(-15, -15, -15))))
                     );
 
     QScopedPointer<IBody> axes(
                     QScopedPointer<IBody>(new Axes)->transform(
-                        Transform::shift(QVector3D(0, 0, 0.1)))
+                        Transform::scale(10, 10, 10).combine(
+                        Transform::shift(QVector3D(-10, 10, 10))))
                     );
 
     camera()->setCanvas(&canvas);

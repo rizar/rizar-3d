@@ -166,10 +166,6 @@ ZBufferCanvas::ZBufferCanvas(QPaintDevice * device) :
 {
 }
 
-qreal& ZBufferCanvas::depth(QPoint point) {
-    return zBuffer_[point.x()][point.y()];
-}
-
 IPainter * ZBufferCanvas::createPainter() {
     return new ZBufferPainter(this);
 }

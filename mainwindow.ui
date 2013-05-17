@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowOpacity">
+   <double>1.000000000000000</double>
+  </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -27,6 +30,7 @@
     <property name="title">
      <string>&amp;Lab</string>
     </property>
+    <addaction name="actionMovingCubes"/>
    </widget>
    <widget class="QMenu" name="menuDemo">
     <property name="title">
@@ -47,7 +51,6 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionDemo1">
    <property name="text">
     <string>Demo1</string>
@@ -61,6 +64,11 @@
   <action name="actionDemo3">
    <property name="text">
     <string>Demo3</string>
+   </property>
+  </action>
+  <action name="actionMovingCubes">
+   <property name="text">
+    <string>MovingCubes</string>
    </property>
   </action>
  </widget>

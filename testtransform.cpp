@@ -36,6 +36,24 @@ void TestTransform::orthogonalApply()
     QCOMPARE(transform.apply(QVector3D(1, 1, 0)), QVector3D(-1, 1, 0));
 }
 
+void TestTransform::rotateXYApply()
+{
+    Transform transform = Transform::rotateXY(acos(0));
+    QCOMPARE(transform.apply(QVector3D(1, 1, 0)), QVector3D(-1, 1, 0));
+}
+
+void TestTransform::rotateXZApply()
+{
+    Transform transform = Transform::rotateXZ(acos(0));
+    QCOMPARE(transform.apply(QVector3D(1, 0, 1)), QVector3D(-1, 0, 1));
+}
+
+void TestTransform::rotateYZApply()
+{
+    Transform transform = Transform::rotateYZ(acos(0));
+    QCOMPARE(transform.apply(QVector3D(0, 1, 1)), QVector3D(0, -1, 1));
+}
+
 void TestTransform::scaleApply()
 {
     QCOMPARE(Transform::scale(2, 3, 4).apply(QVector3D(3, 5, 6)), QVector3D(6, 15, 24));

@@ -15,6 +15,9 @@ private slots:
     void shiftApply();
     void reflectApply();
     void orthogonalApply();
+    void rotateXYApply();
+    void rotateXZApply();
+    void rotateYZApply();
     void scaleApply();
 
 private:

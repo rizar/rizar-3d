@@ -81,7 +81,9 @@ public:
     virtual IPainter * createPainter();
 
 private:
-    qreal& depth(QPoint point);
+    inline qreal& depth(QPoint point) {
+        return zBuffer_[point.x()][point.y()];
+    }
 
 private:
     QVector< QVector<qreal> > zBuffer_;

@@ -23,7 +23,7 @@ QMainWindow * Scenario::mainWindow() {
 }
 
 ICamera * Scenario::camera() {
-    return camera_;
+    return camera_.data();
 }
 
 void Scenario::keyPressEvent(QKeyEvent *event)
@@ -54,6 +54,10 @@ void Scenario::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_L) {
         camera()->turnRight(ANGLE);
     }
+    if (event->key() == Qt::Key_R) {
+        camera()->reset();
+    }
+
     mainWindow()->repaint();
 }
 

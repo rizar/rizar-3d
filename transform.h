@@ -17,6 +17,9 @@ public:
     static Transform shift(QVector3D const& onVector);
     static Transform reflect(quint8 axeNumber);
     static Transform orthogonal(QVector3D toI, QVector3D toJ, QVector3D toK);
+    static Transform rotateXY(qreal alpha);
+    static Transform rotateXZ(qreal alpha);
+    static Transform rotateYZ(qreal alpha);
     static Transform scale(qreal kx, qreal ky, qreal kz);
     static Transform perspective(qreal zMin);
 

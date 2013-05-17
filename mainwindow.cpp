@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "scenario.h"
 #include "demos.h"
+#include "lab.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -12,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionDemo1, SIGNAL(triggered()), this, SLOT(demo1()));
     connect(ui->actionDemo2, SIGNAL(triggered()), this, SLOT(demo2()));
     connect(ui->actionDemo3, SIGNAL(triggered()), this, SLOT(demo3()));
+    connect(ui->actionMovingCubes, SIGNAL(triggered()), this, SLOT(movingCubes()));
 
     scenario_.reset(new DefaultScenario(this));
 }
@@ -32,6 +34,11 @@ void MainWindow::demo2() {
 
 void MainWindow::demo3() {
     scenario_.reset(new Demo3(this));
+    repaint();
+}
+
+void MainWindow::movingCubes() {
+    scenario_.reset(new Lab(this));
     repaint();
 }
 

@@ -2,6 +2,7 @@
 #define SCENARIO_H
 
 #include <QObject>
+#include <QScopedPointer>
 
 class QMainWindow;
 class QPaintEvent;
@@ -27,7 +28,7 @@ protected:
     void writeCameraState(QPainter & painter);
 
 private:
-    ICamera * camera_;
+    QScopedPointer<ICamera> camera_;
 };
 
 class DefaultScenario : public Scenario {

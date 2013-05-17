@@ -21,6 +21,7 @@ public slots:
     void demo1();
     void demo2();
     void demo3();
+    void movingCubes();
 
 protected:
     void paintEvent(QPaintEvent *);
